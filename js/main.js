@@ -19,6 +19,39 @@ document.addEventListener("DOMContentLoaded", function () {
   var ML_FORM_ID = "194434697727575292";
   var ML_ENDPOINT = "https://assets.mailerlite.com/jsonp/" + ML_ACCOUNT_ID + "/forms/" + ML_FORM_ID + "/subscribe";
 
+  // Popup di conferma iscrizione: creato una sola volta e riusato da tutti i moduli.
+  var mlModalOverlay = document.createElement("div");
+  mlModalOverlay.className = "ml-modal-overlay";
+  mlModalOverlay.innerHTML =
+    '<div class="ml-modal" role="dialog" aria-modal="true">' +
+      '<button type="button" class="ml-modal-x" aria-label="Chiudi">&times;</button>' +
+      '<div class="ml-modal-icon"></div>' +
+      '<h3 class="ml-modal-title"></h3>' +
+      '<p class="ml-modal-text"></p>' +
+      '<button type="button" class="btn btn-primary ml-modal-close">Va bene</button>' +
+    '</div>';
+  document.body.appendChild(mlModalOverlay);
+
+  function closeMlModal() { mlModalOverlay.classList.remove("is-open"); }
+  mlModalOverlay.querySelector(".ml-modal-x").addEventListener("click", closeMlModal);
+  mlModalOverlay.querySelector(".ml-modal-close").addEventListener("click", closeMlModal);
+  mlModalOverlay.addEventListener("click", function (e) {
+    if (e.target === mlModalOverlay) closeMlModal();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeMlModal();
+  });
+
+  function openMlModal(success) {
+    mlModalOverlay.classList.toggle("is-error", !success);
+    mlModalOverlay.querySelector(".ml-modal-icon").textContent = success ? "✓" : "!";
+    mlModalOverlay.querySelector(".ml-modal-title").textContent = success ? "Iscrizione ricevuta" : "Qualcosa non ha funzionato";
+    mlModalOverlay.querySelector(".ml-modal-text").textContent = success
+      ? "Grazie! Se richiesto, controlla la tua casella email per confermare l'iscrizione."
+      : "Riprova tra poco, oppure scrivi a info@mariorelli.it e ti aggiungo io.";
+    mlModalOverlay.classList.add("is-open");
+  }
+
   var newsletterForms = document.querySelectorAll(".newsletter-form");
   newsletterForms.forEach(function (form) {
     form.addEventListener("submit", function (e) {
@@ -29,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
       var email = emailInput ? emailInput.value.trim() : "";
       if (!email) return;
 
-      var originalNote = note ? note.textContent : "";
       var originalBtnText = button ? button.textContent : "";
       if (button) { button.disabled = true; button.textContent = "Invio..."; }
 
@@ -43,13 +75,13 @@ document.addEventListener("DOMContentLoaded", function () {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: body.toString()
       }).then(function () {
-        if (note) note.textContent = "Grazie! Controlla la tua casella email per confermare l'iscrizione.";
-        if (button) button.textContent = originalBtnText;
-        if (button) button.disabled = false;
+        if (button) { button.textContent = originalBtnText; button.disabled = false; }
+        if (note) note.textContent = "Grazie per l'iscrizione!";
         form.reset();
+        openMlModal(true);
       }).catch(function () {
-        if (note) note.textContent = "Qualcosa non ha funzionato. Riprova tra poco o scrivi a info@mariorelli.it.";
         if (button) { button.disabled = false; button.textContent = originalBtnText; }
+        openMlModal(false);
       });
     });
   });

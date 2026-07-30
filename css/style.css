@@ -281,6 +281,81 @@ section { padding: 92px 0; }
 }
 .series-banner img { width: 84px; height: 84px; border-radius: 50%; }
 
+/* Popup di conferma iscrizione newsletter */
+.ml-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(59, 44, 40, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+.ml-modal-overlay.is-open { display: flex; }
+.ml-modal {
+  position: relative;
+  background: var(--cream-soft);
+  border-radius: var(--radius);
+  padding: 44px 36px 36px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow);
+  animation: mlModalIn 0.22s ease;
+}
+@keyframes mlModalIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ml-modal-x {
+  position: absolute;
+  top: 14px; right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--ink-soft);
+  padding: 4px;
+}
+.ml-modal-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.ml-modal-overlay.is-error .ml-modal-icon { background: var(--terracotta-deep); }
+.ml-modal-title {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.ml-modal-text {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  margin-bottom: 26px;
+}
+.ml-modal-close { width: 100%; justify-content: center; }
+
+body.dark-zone .ml-modal {
+  background: var(--dr-card);
+  border: 1px solid var(--dr-line);
+}
+body.dark-zone .ml-modal-title { color: var(--dr-text); }
+body.dark-zone .ml-modal-text { color: var(--dr-text-soft); }
+body.dark-zone .ml-modal-x { color: var(--dr-text-soft); }
+body.dark-zone .ml-modal-icon { background: var(--dr-gold); color: var(--dr-bg); }
+body.dark-zone .ml-modal-overlay.is-error .ml-modal-icon { background: var(--dr-wine); color: var(--dr-text); }
+
 /* Manifesto — il mantra del sito */
 .manifesto {
   background: var(--ink);
